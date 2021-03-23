@@ -1,0 +1,42 @@
+
+{% extends "base.html" %}
+{% load static %}
+
+{% block css_content %}
+
+<link rel="stylesheet" href="{% static "css/panel.css" %}">
+
+{% endblock %}
+
+
+{% block main_content %}
+<div class="container">
+  <h1>Your Books</h1>
+  <br><br>
+  <div class="row small-up-5 medium-up-3 large-up-4">
+    {% for book_label, book in books_details.items %}
+    <div class="column">
+      <div class="product-card">
+        <div class="product-card-thumbnail">
+          <a href="{% url 'player' book.code %}"><img style="width: 200px;" src="{{ book.url }}"/></a>
+        </div>
+        <h2 class="product-card-title"><a href="{% url 'player' book.code %}"></a>{{ book.title }}</a></h2>
+        {% if book.uploading %}
+        <span class="product-card-desc">Uploading...</span>
+        {% endif %}
+        <span class="product-card-desc">Product Description</span>
+        <span class="product-card-price">{{book.locSec }}</span><span class="product-card-sale"></span>
+        <!-- <div class="product-card-colors">
+        </div> -->
+        <form action="{% url 'postDeleteBook' %}" method="POST">
+          {% csrf_token %}
+          <input type="hidden" name="bookCode" value="{{book.code}}">
+          <button class="alert button">Delete</button>
+        </form>
+      </div>
+    </div>
+    {% endfor %}
+  </div>  
+  
+{% endblock %}
+

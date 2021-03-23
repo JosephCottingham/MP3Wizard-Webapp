@@ -1,0 +1,36 @@
+
+{% extends "base.html" %}
+{% load static %}
+
+{% block css_content %}
+
+<link rel="stylesheet" href="{% static "css/signup.css" %}">
+
+{% endblock %}
+
+
+{% block main_content %}
+
+{% if messg %}
+  <script>
+    alert('{{ messg }}')
+  </script>
+{% endif %}
+<div class="container">
+  <form class="sign-up-form" method="POST" action="/postSignUp/">
+    {% csrf_token %}
+    <h4 class="text-center">Sign up with you email account</h4>
+    <label>Name
+      <input type="text" name="name" placeholder="John Doe">
+    </label>
+    <label>Email
+      <input type="email" name="email" placeholder="somebody@example.com">
+    </label>
+    <label>Password
+      <input type="password" name="pass" placeholder="Password">
+    </label>
+    <p><input type="submit" class="button expanded" value="Sign Up"></input></p>
+    <p class="text-center"><a href="{% url "signIn" %}">SignIn</a></p>
+  </form>
+</div>
+{% endblock %}
