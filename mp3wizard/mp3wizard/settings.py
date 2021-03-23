@@ -137,5 +137,4 @@ FIREBASE_CONFIG = {
     'databaseURL': os.getenv('FIREBASE_CONFIG_DATABASEURL'),
     'projectId': os.getenv('FIREBASE_CONFIG_PROJECTID'),
     'storageBucket': os.getenv('FIREBASE_CONFIG_STORAGEBUCKET'),
-    'serviceAccount': os.path.join(os.getcwd(), os.getenv('FIREBASE_CONFIG_SERVICEACCOUNT'))
   }

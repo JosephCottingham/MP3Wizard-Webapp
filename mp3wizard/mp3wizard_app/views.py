@@ -193,8 +193,26 @@ def panel(request):
         books_details[book_title] = dict()
         books_details[book_title]['url'] = storage.child('users').child(a).child(book_title).child('icon.png').get_url(token=idtoken)
         book_details = database.child(a).child(book_title).get(token=idtoken).val()
+
         for key in book_details.keys():
             books_details[book_title][key] = book_details[key]
+
+        totalSec = int(float(books_details[book_title]['locSec']))
+        sec = int(totalSec % 60)
+        totalSec -= sec
+        if sec < 10:
+            sec = f'0{sec}'
+        minute = int((totalSec / 60) % 60)
+        totalSec -= minute*60
+        if minute < 10:
+            minute = f'0{minute}'
+        hour = int((totalSec / 60 / 60))
+        if hour < 10:
+            hour = f'0{hour}'
+        books_details[book_title]['loc'] = f'{hour}:{minute}:{sec}'
+    print('')
+    print('')
+    print(books_details)
     return render(request, 'panel.html', {'current_user':current_user, 'page':'panel', 'books_details':books_details})
 
 def player(request, book_code):
@@ -254,7 +272,9 @@ def postTimeUpdate(request):
     book_code = request.POST.get('bookCode')
     locSec = request.POST.get('locSec')
 
-    database.child(a).child(book_code).update({'locSec':locSec}, token=idtoken)
+    books_children = database.child(a).get(token=idtoken).val()
+    if book_code in books_children:
+        database.child(a).child(book_code).update({'locSec':locSec}, token=idtoken)
     
 
     return HttpResponse("OK")

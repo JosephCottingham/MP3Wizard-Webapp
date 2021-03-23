@@ -25,7 +25,7 @@
         <span class="product-card-desc">Uploading...</span>
         {% endif %}
         <span class="product-card-desc">Product Description</span>
-        <span class="product-card-price">{{book.locSec }}</span><span class="product-card-sale"></span>
+        <span class="product-card-price">Current Location: {{ book.loc }}</span>
         <!-- <div class="product-card-colors">
         </div> -->
         <form action="{% url 'postDeleteBook' %}" method="POST">
