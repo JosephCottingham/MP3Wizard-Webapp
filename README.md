@@ -6,7 +6,9 @@ Clone this repository.
 
 
 ```
-npm install
+python3 -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
 ```
 
 Change `.env.example` file to `.env`:
@@ -14,25 +16,6 @@ Change `.env.example` file to `.env`:
 
 Then you can run the following to run the server:
 
-## Production
-
 ```
-npm start
+python3 manage.py runserver
 ```
-
-## Testing
-
-```
-npm test
-```
-
-## Dev
-
-```
-npm dev
-```
-
-## DOCKER
-
-[DOCKER](https://hub.docker.com/repository/docker/josephcottingham/yourqr)
-[Docs](https://josephcottingham.github.io/Your-QR/)
