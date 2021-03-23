@@ -1,0 +1,90 @@
+
+{% extends "base.html" %}
+{% load static %}
+
+{% block css_content %}
+<link rel="stylesheet" href="https://cdn.plyr.io/3.6.4/plyr.css" />
+<link rel="stylesheet" href="{% static "css/player.css" %}">
+
+{% endblock %}
+
+
+{% block main_content %}
+<div class="container">
+  <div class="header-container center">
+    <h1>{{ book.title }}</h1>
+    <img style="width: 500px;" src="{{ book.url }}"/>
+  </div>
+  <audio id="player" controls>
+    {% for audio_url in book.audio_urls %}
+    <source src="{{ audio_url }}" type="audio/mp3" />
+    {% endfor %}
+  </audio>
+
+{% endblock %}
+
+{% block js_content %}
+
+
+
+
+<script src="https://cdn.plyr.io/3.6.4/plyr.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/js-cookie@rc/dist/js.cookie.min.js"></script>
+
+<script>
+  const player = new Plyr('#player');
+  audioElement = document.getElementById("player")
+  audioElement.currentTime = {{ book.locSec }};
+
+  var csrftoken = Cookies.get('csrftoken');
+  function csrfSafeMethod(method) {
+    // these HTTP methods do not require CSRF protection
+    return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+  }
+
+  $.ajaxSetup({
+    beforeSend: function(xhr, settings) {
+        if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+            xhr.setRequestHeader("X-CSRFToken", csrftoken);
+        }
+    }
+  });
+  function saveLocation(){
+    console.log('saveLocation');
+    $.ajax({
+      type: "POST",
+      url: "{% url 'postTimeUpdate' %}",
+      data: {
+        bookCode: "{{ book.code }}",
+        locSec: audioElement.currentTime
+      },
+      dataType: "json"
+    });
+  }
+  var saveInterval = setInterval(saveLocation, 30000);
+
+  var lastTime = audioElement.currentTime
+  function largeChange(){
+    console.log('largeChangeCheck')
+    if (Math.abs(lastTime - audioElement.currentTime) > 30) {
+      console.log('largeChangeDetected')
+      $.ajax({
+        type: "POST",
+        url: "{% url 'postTimeUpdate' %}",
+        data: {
+          bookCode: "{{ book.code }}",
+          locSec: audioElement.currentTime
+        },
+        dataType: "json"
+      });
+      lastTime = audioElement.currentTime
+    }
+  }
+  var largeChangeInterval = setInterval(largeChange, 1000);
+
+
+
+
+</script>
+
+{% endblock %}

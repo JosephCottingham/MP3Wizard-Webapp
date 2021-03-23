@@ -1,0 +1,33 @@
+
+{% extends "base.html" %}
+{% load static %}
+
+{% block css_content %}
+
+<link rel="stylesheet" href="{% static "css/home.css" %}">
+
+{% endblock %}
+
+
+{% block main_content %}
+
+<div class="hero-full-screen">
+
+    <div class="top-content-section">
+
+    </div>
+  
+    <div class="middle-content-section">
+      <h1 style="color: #1779ba; margin-bottom: 3em;">Enjoy Your Content On Your Terms</h1>
+      <a class="button large" href="{% url "signIn" %}">Sign In</a>
+      <a class="button large" href="{% url "signUp" %}">Sign Up</a>
+    </div>
+  
+    <div class="bottom-content-section" data-magellan data-threshold="0">
+    </div>
+  
+  </div>
+  
+  
+  
+{% endblock %}

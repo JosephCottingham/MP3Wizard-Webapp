@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block css_content %}
+
+<link rel="stylesheet" href="{% static "css/create.css" %}">
+
+{% endblock %}
+
+
+{% block main_content %}
+<div class="container">
+  <h2>Create New Book</h2>
+  <form action="/post_create/" method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <label>Title:
+      <input type="text" name="title" value="" required>
+    </label>
+    <br><br>
+    <label>Icon:
+      <input type="file" name="icon" id="icon" accept="png" required>
+    </label>
+    <div class="audio_settings">
+      <div class="center">
+        <button class="button" id="addAudioBtn" type="button">Add Audio Clips</button>
+        <button class="button" id="removeAudioBtn" type="button">Remove Audio Clips</button>
+      </div>
+    </div>
+    <ul id="audioFieldList">
+      <li id="audio_0" class="audio_form_field">
+        <label>Audio 1:
+          <input type="file" name="0" id="0" accept="mp3" required>
+        </label>
+      </li>
+    </ul>
+
+
+    <input type="submit" name="" value="Create">
+</div>
+
+{% endblock %}
+
+{% block js_content %}
+<script>
+  var audioFieldNum = 1;
+
+  function addAudioField() {
+    var ul = document.getElementById("audioFieldList");
+    var li = document.createElement("li");
+    li.innerHTML =
+      `<hr><label>Audio ${audioFieldNum+1}:<input type="file" name="${audioFieldNum}" id="${audioFieldNum}" required></label>`;
+    li.setAttribute("id", `audio_${audioFieldNum}`);
+    li.setAttribute("class", "audio_form_field");
+    ul.appendChild(li);
+    audioFieldNum++;
+  }
+
+  function removeAudioField() {
+    if (audioFieldNum > 1) {
+      audioFieldNum--;
+      var li = document.getElementById(`audio_${audioFieldNum}`);
+      li.remove();
+    }
+  }
+
+  document.getElementById("addAudioBtn").addEventListener("click", addAudioField);
+
+  document.getElementById("removeAudioBtn").addEventListener("click", removeAudioField);
+</script>
+
+{% endblock %}

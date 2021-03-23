@@ -1,0 +1,26 @@
+.audio_form_field {
+    list-style-type: none;
+    background: #1779ba;
+    padding: 1em;
+    margin: 0;
+}
+
+.audio_form_field label {
+    color:antiquewhite;
+    font-size: large;
+    font-weight: bold;
+}
+
+.audio_settings {
+    height: 50px;
+    position: relative;
+}
+  
+.center {
+    margin: 0;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    -ms-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+  }
