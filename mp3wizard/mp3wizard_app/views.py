@@ -39,7 +39,7 @@ def signIn(request):
         a = a['localId']
     except:
         pass
-    return render(request, 'signIn.html', {'current_user':current_user, 'page':'signin'})
+    return render(request, 'signin.html', {'current_user':current_user, 'page':'signin'})
 
 def postSignIn(request):
     email = request.POST.get('email')
@@ -50,7 +50,7 @@ def postSignIn(request):
         user = authe.sign_in_with_email_and_password(email, passw)
     except:
         message = 'invalid credentials'
-        return render(request, 'signIn.html', {"messg":message})
+        return render(request, 'signin.html', {"messg":message})
     print(user['idToken'])
     session_id = user['idToken']
     request.session['uid'] = str(session_id)
@@ -71,7 +71,7 @@ def postSignIn(request):
 
 def logout(request):
     auth.logout(request)
-    return render(request, 'signIn.html')
+    return render(request, 'signin.html')
 
 def signUp(request):
     current_user = None
@@ -84,7 +84,7 @@ def signUp(request):
         a = a['localId']
     except:
         pass
-    return render(request, 'signUp.html', {'current_user':current_user, 'page':'signup'})
+    return render(request, 'signup.html', {'current_user':current_user, 'page':'signup'})
 
 def postSignUp(request):
     email = request.POST.get('email')
@@ -93,14 +93,14 @@ def postSignUp(request):
         user = authe.create_user_with_email_and_password(email, passw)
     except:
         message = 'unable to create account try again'
-        return render(request, 'signUp.html', {"messg":message})
+        return render(request, 'signup.html', {"messg":message})
 
     uid = user['localId']
     # name = database.child('users').document(uid)
 
     # data = {'name': name, "status":"1"}
     # mssg = "you may now sign in"
-    return render(request, 'signIn.html')
+    return render(request, 'signin.html')
 
 def create(request):
     idtoken = request.session['uid']
