@@ -50,7 +50,8 @@ def get_subscription(stripe_id):
     customer=stripe_id,
     status='active',
     price="price_1JFkqpGKcKkOnV80GnyqxiV7")
-    return subscription['data'][0]
+    if subscription:
+        return subscription['data'][0]
 
 def get_user(func):
     def inner(*args, **kwargs):
