@@ -13,23 +13,26 @@
 
 
 <div class="container">
-  <form class="sign-up-form" method="POST" action="/postSignUp/">
-    {% csrf_token %}
-    <h4 class="text-center">Sign up with you email account</h4>
-    <label>Name
-      <input type="text" name="name" placeholder="John Doe">
-    </label>
-    <label>Email
-      <input type="email" name="email" placeholder="somebody@example.com">
-    </label>
-    <label>Password
-      <input type="password" name="pass" placeholder="Password">
-    </label>
+
+  <form class="callout text-center" method="POST" action="/postSignUp/">
+    <h2>Sign Up</h2>
+    <div class="floated-label-wrapper">
+      <label for="name">Name</label>
+      <input type="text" id="name" name="name" placeholder="Name">
+    </div>
+    <div class="floated-label-wrapper">
+      <label for="email">Email</label>
+      <input type="email" id="email" name="email" placeholder="Email">
+    </div>
+    <div class="floated-label-wrapper">
+      <label for="pass">Password</label>
+      <input type="password" id="pass" name="pass" placeholder="Password">
+    </div>
     {% if messg %}
       <p>{{ messg }}</p>
     {% endif %}
-    <p><input type="submit" class="button expanded" value="Sign Up"></input></p>
-    <p class="text-center"><a href="{% url "signIn" %}">SignIn</a></p>
+    <input class="button expanded" type="submit" value="Sign In">
+    <p class="text-center"><a class="signin-btn" href="{% url "signUp" %}">Sign In</a></p>
   </form>
 </div>
 {% endblock %}

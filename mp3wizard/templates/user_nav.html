@@ -3,25 +3,23 @@
 <link rel="stylesheet" href="{% static "css/user_nav.css" %}">
 
 <nav class="top-bar topbar-responsive">
-    <div class="top-bar-title">
-      <a class="topbar-responsive-logo" href="#"><strong>MP3Wizard</strong></a>
+  <div class="top-bar-title">
+    <a class="topbar-responsive-logo" href="#"><strong>MP3Wizard</strong></a>
+  </div>
+  <div id="topbar-responsive" class="topbar-responsive-links">
+    <div class="top-bar-right">
+      <ul class="menu simple vertical medium-horizontal">
+        <li><a href="{% url "home" %}">Home</a></li>
+        {% if current_user %}
+        <li><a href="{% url "panel" %}">Panel</a></li>
+        <li><a href="{% url "create" %}">Add Book</a></li>
+        <li><a href="{% url "customerStripePortal" %}">Billing</a></li>
+        <li><a href="{% url "logout" %}">Logout</a></li>
+        {% else %}
+        <li><a href="{% url "signUp" %}">Sign Up</a></li>
+        <li><a href="{% url "signIn" %}">Sign In</a></li>
+        {% endif %}
+      </ul>
     </div>
-    <div id="topbar-responsive" class="topbar-responsive-links">
-      <div class="top-bar-right">
-        <ul class="menu simple vertical medium-horizontal">
-          <li><a href="{% url "home" %}">Home</a></li>
-          {% if current_user %}
-          <li><a href="{% url "panel" %}">Panel</a></li>
-          <li><a href="{% url "create" %}">Add Book</a></li>
-          <li><a href="{% url "customerStripePortal" %}">Billing</a></li>
-          <li><a href="{% url "logout" %}">Logout</a></li>
-          {% else %}
-          <li><a href="{% url "signUp" %}">SignUp</a></li>
-          <li><a href="{% url "signIn" %}">SignIn</a></li>
-          {% endif %}
-        </ul>
-      </div>
-    </div>
-  </nav>
-  
-  
+  </div>
+</nav>

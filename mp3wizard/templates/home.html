@@ -11,16 +11,14 @@
 
 {% block main_content %}
 
-<div class="hero-full-screen">
 
-    <div class="top-content-section">
-
-    </div>
   
-    <div class="middle-content-section">
-      <h1 style="color: #1779ba; margin-bottom: 3em;">Enjoy Your Content On Your Terms</h1>
-      <a class="button large" href="{% url "signIn" %}">Sign In</a>
-      <a class="button large" href="{% url "signUp" %}">Sign Up</a>
+    <div class="home-site-hero">
+      <div class="home-site-hero-content">
+        <h1>Enjoy Your Content On Your Terms</h1>
+        <p class="subheader"></p>
+        <a class="button large round" style="background-color: #2c3840;" href="{% url "signUp" %}">Sign Up</a>
+      </div>
     </div>
   
     <div class="bottom-content-section" data-magellan data-threshold="0">
@@ -28,6 +26,25 @@
   
   </div>
   
+
+<div class="home-site-content-section">
+  <div class="home-site-content-section-img">
+    <img src="https://images.pexels.com/photos/3642350/pexels-photo-3642350.jpeg?cs=srgb&dl=pexels-laura-balbarde-3642350.jpg&fm=jpg" alt="" />
+  </div>
+  <div class="home-site-content-section-block">
+    <h3 class="home-site-content-section-block-header">Upload Any Content!</h3>
+    <p class="home-site-content-section-block-subheader subheader">You can upload any audio content into a book.</p>
+  </div>
+  <div class="home-site-content-section-block small-order-2 medium-order-1">
+    <h3 class="home-site-content-section-block-header">Sync Location Access Devices!</h3>
+    <p class="home-site-content-section-block-subheader subheader">Your location in the book will be synced access all devices.</p>
+  </div>
+  <div class="home-site-content-section-img small-order-1 medium-order-2">
+    <img src="https://images.pexels.com/photos/207589/pexels-photo-207589.jpeg?cs=srgb&dl=pexels-pixabay-207589.jpg&fm=jpg" alt="" />
+  </div>
+</div>
+
+
   
   
 {% endblock %}

@@ -1,65 +1,124 @@
+.home-site-hero {
+  background: url("https://images.pexels.com/photos/3394662/pexels-photo-3394662.jpeg") top right no-repeat;
+  height: 65vh;
+  background-size: cover;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-align-items: center;
+      -ms-flex-align: center;
+          align-items: center;
+}
 
-.hero-full-screen {
-    height: 100vh;
-    display: -webkit-flex;
-    display: -ms-flexbox;
-    display: flex;
-    -webkit-flex-direction: column;
-        -ms-flex-direction: column;
-            flex-direction: column;
-    -webkit-align-items: center;
-        -ms-flex-align: center;
-            align-items: center;
-    -webkit-justify-content: space-between;
-        -ms-flex-pack: justify;
-            justify-content: space-between;
-    background: url("https://images.pexels.com/photos/6318/smartphone-technology-music-headphones.jpg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260") center center no-repeat;
-    background-size: cover;
+@media screen and (min-width: 40em) {
+  .home-site-hero {
+    background-position: center center;
   }
-  
-  .hero-full-screen .middle-content-section {
-    text-align: center;
-    color: #fefefe;
+}
+
+.home-site-hero-content {
+  max-width: 75rem;
+  margin: 100 auto;
+  padding-left: 5%;
+  padding-right: 5%;
+}
+
+.home-site-hero-content h1 {
+  font-size: 45px;
+  font-weight: bold;
+  color: #2c3840;
+}
+
+.home-site-hero-content .button.round {
+  border-radius: 5000px;
+  text-transform: uppercase;
+  font-size: 12px;
+  margin-bottom: 0;
+}
+
+@media screen and (min-width: 40em) {
+  .home-site-hero-content {
+    padding-right: 50%;
   }
-  
-  .hero-full-screen .top-content-section {
-    width: 100%;
+}
+
+
+.home-site-content-section {
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex-wrap: wrap;
+      -ms-flex-wrap: wrap;
+          flex-wrap: wrap;
+}
+
+.home-site-content-section .button.round {
+  border-radius: 5000px;
+  text-transform: uppercase;
+  margin-bottom: 0;
+}
+
+.home-site-content-section .home-site-content-section-img {
+  -webkit-align-self: center;
+      -ms-flex-item-align: center;
+              -ms-grid-row-align: center;
+          align-self: center;
+  -webkit-flex: 1 0 100%;
+      -ms-flex: 1 0 100%;
+          flex: 1 0 100%;
+}
+
+.home-site-content-section .home-site-content-section-img img {
+  width: 100%;
+}
+
+@media screen and (min-width: 40em) {
+  .home-site-content-section .home-site-content-section-img {
+    -webkit-flex: 1 0 50%;
+        -ms-flex: 1 0 50%;
+            flex: 1 0 50%;
   }
-  
-  .hero-full-screen .bottom-content-section {
-    padding: 1rem;
+}
+
+.home-site-content-section .home-site-content-section-block {
+  padding: 1rem;
+  -webkit-flex: 1 0 100%;
+      -ms-flex: 1 0 100%;
+          flex: 1 0 100%;
+  -webkit-align-self: stretch;
+      -ms-flex-item-align: stretch;
+          align-self: stretch;
+  background: #e6e6e6;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex-direction: column;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -webkit-justify-content: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-align-items: flex-start;
+      -ms-flex-align: start;
+          align-items: flex-start;
+}
+
+@media screen and (min-width: 40em) {
+  .home-site-content-section .home-site-content-section-block {
+    -webkit-flex: 1 0 50%;
+        -ms-flex: 1 0 50%;
+            flex: 1 0 50%;
+    padding: 2rem;
   }
-  
-  .hero-full-screen .bottom-content-section svg {
-    height: 3.75rem;
-    width: 3.75rem;
-    fill: #fefefe;
-  }
-  
-  .hero-full-screen .top-bar {
-    background: transparent;
-  }
-  
-  .hero-full-screen .top-bar .menu {
-    background: transparent;
-  }
-  
-  .hero-full-screen .top-bar .menu-text {
-    color: #fefefe;
-  }
-  
-  .hero-full-screen .top-bar .menu li {
-    display: -webkit-flex;
-    display: -ms-flexbox;
-    display: flex;
-    -webkit-align-items: center;
-        -ms-flex-align: center;
-            align-items: center;
-  }
-  
-  .hero-full-screen .top-bar .menu a {
-    color: #fefefe;
-    font-weight: bold;
-  }
-  
-  
+}
+
+.home-site-content-section-block-header {
+  font-size: 24px;
+}
+
+.home-site-content-section-block-subheader {
+  font-size: 13px;
+}
+.home-site-content-section-block a {
+  background-color:#2c3840;
+}
