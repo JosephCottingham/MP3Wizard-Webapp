@@ -15,6 +15,7 @@
 <div class="container">
 
   <form class="callout text-center" method="POST" action="/postSignUp/">
+    {% csrf_token %}
     <h2>Sign Up</h2>
     <div class="floated-label-wrapper">
       <label for="name">Name</label>
@@ -31,7 +32,7 @@
     {% if messg %}
       <p>{{ messg }}</p>
     {% endif %}
-    <input class="button expanded" type="submit" value="Sign In">
+    <input class="button expanded" type="submit" value="Sign Up">
     <p class="text-center"><a class="signin-btn" href="{% url "signUp" %}">Sign In</a></p>
   </form>
 </div>
