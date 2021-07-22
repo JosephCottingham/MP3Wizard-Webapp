@@ -7,8 +7,11 @@ from django.urls import reverse
 from . import utils
 from .logger import logger
 from django.http import HttpResponse
+import stripe
+
 
 firebase = pyrebase.initialize_app(settings.FIREBASE_CONFIG)
+stripe.api_key = settings.STRIPE_TEST_SECRET_KEY
 
 database = firebase.database()
 authe = firebase.auth()
@@ -77,6 +80,7 @@ def signUp(request):
     current_user = None
     try:
         idtoken = request.session['uid']
+
         a = authe.get_account_info(idtoken)
         a = a['users'] 
         a = a[0]
@@ -89,46 +93,76 @@ def signUp(request):
 def postSignUp(request):
     email = request.POST.get('email')
     passw = request.POST.get('pass')
+    name = request.POST.get('name')
     try:
         user = authe.create_user_with_email_and_password(email, passw)
-    except:
+    except Exception as e:
         message = 'unable to create account try again'
+        print(e)
         return render(request, 'signup.html', {"messg":message})
 
-    uid = user['localId']
-    # name = database.child('users').document(uid)
-
-    # data = {'name': name, "status":"1"}
-    # mssg = "you may now sign in"
-    return render(request, 'signin.html')
-
-def create(request):
+    session_id = user['idToken']
+    request.session['uid'] = str(session_id)
     idtoken = request.session['uid']
-    try:
-        a = authe.get_account_info(idtoken)
-    except Exception:
-        return redirect(reverse('signIn'))
+
+    strip_user = stripe.Customer.create(
+        email=email,
+        name=name
+    )
+
+    stripe_user_id = strip_user['id']
+
+    data = {'name': name, "stripe_id":stripe_user_id}
+
     a = authe.get_account_info(idtoken)
     a = a['users'] 
     a = a[0]
     current_user = a['email']
+    print(current_user)
     a = a['localId']
-    return render(request, 'create.html', {'current_user':current_user, 'page':'create'})
+
+    database.child(a).child('user_info').set(data, token=user['idtoken'])
+
+    # mssg = "you may now sign in"
+    return render(request, 'signin.html')
+
+@utils.get_user
+def create(request, user):
+
+    user_info = database.child(user['localId']).child('user_info').get(token=user['idtoken']).val()
+    print(user_info)
+    books_children = database.child(user['localId']).get(token=user['idtoken']).val()
+    # del books_children['user_info']
+    
+    subscription = None
+
+    if (len(books_children) > 0):
+        subscription = utils.get_subscription(user_info['stripe_id'])
+
+    if not subscription or subscription['status'] != 'active':
+        success_url = reverse('create')
+        stripe_session = stripe.checkout.Session.create(
+            success_url='https://google.com',
+            cancel_url="https://example.com/cancel",
+            payment_method_types=["card"],
+            line_items=[
+                {
+                    "price": "price_1JFkqpGKcKkOnV80GnyqxiV7",
+                    "quantity":1
+                },
+            ],
+            mode="subscription",
+            customer=user_info['stripe_id']
+        )
+        return redirect(stripe_session['url'])
 
 
-def post_create(request):
+    return render(request, 'create.html', {'current_user':user['email'], 'page':'create'})
+
+@utils.get_user
+def post_create(request, user):
 
     title = request.POST.get('title')
-    idtoken = request.session['uid']
-    try:
-        a = authe.get_account_info(idtoken)
-    except Exception:
-        return redirect(reverse('signIn'))
-
-    a = authe.get_account_info(idtoken)
-    a = a['users']
-    a = a[0]
-    a = a['localId']
 
     fs = FileSystemStorage()
 
@@ -158,41 +192,34 @@ def post_create(request):
     }
 
 
-    database.child(a).child(code).set(data, token=idtoken)
+    database.child(user['localId']).child(code).set(data, token=user['idtoken'])
 
-    upload_firebase_thread = threading.Thread(target=utils.upload_firebase_storage, args=[paths_audio, a, idtoken, code], daemon=True)
+    upload_firebase_thread = threading.Thread(target=utils.upload_firebase_storage, args=[paths_audio, user['localId'], idtoken, code], daemon=True)
     upload_firebase_thread.start()
 
     return redirect(reverse('panel'))
 
-def panel(request):
+@utils.get_user
+def panel(request, user):
 
     import time
     import datetime
     from datetime import timezone
 
-    idtoken = request.session['uid']
-    try:
-        a = authe.get_account_info(idtoken)
-    except Exception:
-        return redirect(reverse('signIn'))
-    a = authe.get_account_info(idtoken)
-    a = a['users']
-    a = a[0]
-    current_user = a['email']
-    a = a['localId']
     books_children=[]
+    print(user['localId'])
+    print(user['idtoken'])
     try:
-        books_children = database.child(a).get(token=idtoken).val()
-        if books_children == None:
-            books_children = []
-    except:
-        pass 
+        books_children = database.child(user['localId']).get(token=user['idtoken']).val()
+    except Exception as e:
+        print(e) 
+    print(books_children)
+    del books_children['user_info']
     books_details = {}
     for book_title in books_children:
         books_details[book_title] = dict()
-        books_details[book_title]['url'] = storage.child('users').child(a).child(book_title).child('icon.png').get_url(token=idtoken)
-        book_details = database.child(a).child(book_title).get(token=idtoken).val()
+        books_details[book_title]['url'] = storage.child('users').child(user['localId']).child(book_title).child('icon.png').get_url(token=user['idtoken'])
+        book_details = database.child(user['localId']).child(book_title).get(token=user['idtoken']).val()
 
         for key in book_details.keys():
             books_details[book_title][key] = book_details[key]
@@ -213,69 +240,53 @@ def panel(request):
     print('')
     print('')
     print(books_details)
-    return render(request, 'panel.html', {'current_user':current_user, 'page':'panel', 'books_details':books_details})
+    return render(request, 'panel.html', {'current_user':user['email'], 'page':'panel', 'books_details':books_details})
 
-def player(request, book_code):
+@utils.get_user
+def player(request, book_code, user):
 
-    idtoken = request.session['uid']
-    try:
-        a = authe.get_account_info(idtoken)
-    except Exception:
-        return redirect(reverse('signIn'))
+    book = database.child(user['localId']).child(book_code).get(token=user['idtoken']).val()
 
-    a = a['users']
-    a = a[0]
-    current_user = a['email']
-    a = a['localId']
-
-    book = database.child(a).child(book_code).get(token=idtoken).val()
-    print(book)
-    # files_list = storage.child('users').child(a).child(book.get('title')).list_files()
-    # for file in files_list:
-    #     print(str(file.metadata))
-    book['url'] = storage.child('users').child(a).child(book_code).child('icon.png').get_url(token=idtoken)
+    book['url'] = storage.child('users').child(user['localId']).child(book_code).child('icon.png').get_url(token=user['idtoken'])
     book['audio_urls'] = list()
     for audio_file in range(int(book['fileNum'])+1):
         print(audio_file)
-        book['audio_urls'].append(storage.child('users').child(a).child(book_code).child(f'{audio_file}.mp3').get_url(token=idtoken))
+        book['audio_urls'].append(storage.child('users').child(user['localId']).child(book_code).child(f'{audio_file}.mp3').get_url(token=user['idtoken']))
     book['currentFile'] = int(book['currentFile'])
-    return render(request, 'player.html', { 'current_user':current_user,'page':'player','book':book })
+    return render(request, 'player.html', { 'current_user':user['email'],'page':'player','book':book })
 
-
-def postDeleteBook(request):
+@utils.get_user
+def postDeleteBook(request, user):
     bookCode = request.POST.get('bookCode')
-    idtoken = request.session['uid']
 
-    a = authe.get_account_info(idtoken)
-    a = a['users']
-    a = a[0]
-    a = a['localId']
-    
     # storage.child('users').child(a).child(bookCode).remove(token=idtoken)
-    database.child(a).child(bookCode).remove(token=idtoken)
+    database.child(user['localId']).child(bookCode).remove(token=user['idtoken'])
 
     return redirect(reverse('panel'))
 
-def postTimeUpdate(request):
-
-
-    idtoken = request.session['uid']
-    try:
-        a = authe.get_account_info(idtoken)
-    except Exception:
-        return redirect(reverse('signIn'))
-    a = authe.get_account_info(idtoken)
-    a = a['users']
-    a = a[0]
-    a = a['localId']
+@utils.get_user
+def postTimeUpdate(request, user):
 
     book_code = request.POST.get('bookCode')
     locSec = request.POST.get('locSec')
 
-    books_children = database.child(a).get(token=idtoken).val()
+    books_children = database.child(user['localId']).get(token=user['idtoken']).val()
     if book_code in books_children:
-        database.child(a).child(book_code).update({'locSec':locSec}, token=idtoken)
+        database.child(user['localId']).child(book_code).update({'locSec':locSec}, token=user['idtoken'])
     
 
     return HttpResponse("OK")
+
+@utils.get_user
+def customerStripePortal(request, user):
+
+    user_info = database.child(user['localId']).child('user_info').get(token=user['idtoken']).val()
+
+    session = stripe.billing_portal.Session.create(
+        customer=user_info['stripe_id'],
+        return_url='https://google.com',
+    )
+    
+    return redirect(session.url, code=303)
+
 

@@ -15,4 +15,5 @@ urlpatterns = [
     path('player/<book_code>', views.player, name = 'player'),
     path('postTimeUpdate/', views.postTimeUpdate, name = 'postTimeUpdate'),
     path('postDeleteBook/', views.postDeleteBook, name = 'postDeleteBook'),
+    path('customerStripePortal', views.customerStripePortal, name = 'customerStripePortal'),
 ]

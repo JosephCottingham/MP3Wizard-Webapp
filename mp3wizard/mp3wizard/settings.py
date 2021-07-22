@@ -137,3 +137,5 @@ FIREBASE_CONFIG = {
     'projectId': os.getenv('FIREBASE_CONFIG_PROJECTID'),
     'storageBucket': os.getenv('FIREBASE_CONFIG_STORAGEBUCKET'),
   }
+
+STRIPE_TEST_SECRET_KEY = os.getenv('STRIPE_TEST_SECRET_KEY')
