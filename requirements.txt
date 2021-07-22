@@ -46,3 +46,4 @@ Pyrebase
 gunicorn
 python-dotenv
 PyJWT
+stripe
