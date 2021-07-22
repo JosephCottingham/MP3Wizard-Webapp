@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from django.contrib import auth
-import pyrebase, os, uuid, threading, datetime
+import pyrebase, os, uuid, threading, datetime, json
 from django.conf import settings
 from django.core.files.storage import FileSystemStorage
 from django.urls import reverse
@@ -45,15 +45,19 @@ def signIn(request):
     return render(request, 'signin.html', {'current_user':current_user, 'page':'signin'})
 
 def postSignIn(request):
+    if request.method == 'GET':
+        return redirect(reverse('signIn'))
+
     email = request.POST.get('email')
     passw = request.POST.get('pass')
     print(email)
     print(passw)
     try:
         user = authe.sign_in_with_email_and_password(email, passw)
-    except:
-        message = 'invalid credentials'
+    except Exception as e:
+        message = json.loads(e.args[1])['error']['message'].replace('_', ' ')
         return render(request, 'signin.html', {"messg":message})
+
     print(user['idToken'])
     session_id = user['idToken']
     request.session['uid'] = str(session_id)
@@ -91,14 +95,17 @@ def signUp(request):
     return render(request, 'signup.html', {'current_user':current_user, 'page':'signup'})
 
 def postSignUp(request):
+    if request.method == 'GET':
+        return redirect(reverse('signUp'))
+
     email = request.POST.get('email')
     passw = request.POST.get('pass')
     name = request.POST.get('name')
     try:
         user = authe.create_user_with_email_and_password(email, passw)
     except Exception as e:
-        message = 'unable to create account try again'
-        print(e)
+        message = json.loads(e.args[1])['error']['message'].replace('_', ' ')
+        print(message)
         return render(request, 'signup.html', {"messg":message})
 
     session_id = user['idToken']
@@ -121,10 +128,10 @@ def postSignUp(request):
     print(current_user)
     a = a['localId']
 
-    database.child(a).child('user_info').set(data, token=user['idtoken'])
+    database.child(a).child('user_info').set(data, token=idtoken)
 
     # mssg = "you may now sign in"
-    return render(request, 'signin.html')
+    return redirect(reverse('panel'))
 
 @utils.get_user
 def create(request, user):
