@@ -11,11 +11,7 @@
 
 {% block main_content %}
 
-{% if messg %}
-  <script>
-    alert('{{ messg }}')
-  </script>
-{% endif %}
+
 <div class="container">
   <form class="sign-up-form" method="POST" action="/postSignUp/">
     {% csrf_token %}
@@ -29,6 +25,9 @@
     <label>Password
       <input type="password" name="pass" placeholder="Password">
     </label>
+    {% if messg %}
+      <p>{{ messg }}</p>
+    {% endif %}
     <p><input type="submit" class="button expanded" value="Sign Up"></input></p>
     <p class="text-center"><a href="{% url "signIn" %}">SignIn</a></p>
   </form>
