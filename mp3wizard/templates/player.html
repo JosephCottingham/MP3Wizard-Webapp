@@ -16,9 +16,7 @@
     <img style="width: 500px;" src="{{ book.url }}"/>
   </div>
   <audio id="player" controls>
-    {% for audio_url in book.audio_urls %}
-    <source src="{{ audio_url }}" type="audio/mp3" />
-    {% endfor %}
+  <source src="{{ book.audio_url }}" type="audio/mp3" />
   </audio>
 
 {% endblock %}

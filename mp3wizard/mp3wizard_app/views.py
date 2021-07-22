@@ -166,20 +166,22 @@ def post_create(request, user):
 
     fs = FileSystemStorage()
 
+    base_path = os.path.join('media', user['localId'])
+    base_path = os.path.join(base_path, title.replace(' ', ''))
     paths_audio = []
     for index, file_upload_name in enumerate(request.FILES):
         ext = '.mp3'
         if file_upload_name =='icon':
             ext = '.png'
-        path = os.path.join(title.replace(' ', ''), str(file_upload_name+ext))
-        path = os.path.join(a, path)
-        path = os.path.join('media', path)
+        path = os.path.join(base_path, str(file_upload_name+ext))
+
         fs.save(path, request.FILES[file_upload_name])
-        paths_audio.append(path)
+        if file_upload_name !='icon':
+            paths_audio.append(path)
 
     code = uuid.uuid4().hex
 
-    logger.info('test')
+
     data = {
         'title': title,
         'currentFile': '0',
@@ -194,7 +196,8 @@ def post_create(request, user):
 
     database.child(user['localId']).child(code).set(data, token=user['idtoken'])
 
-    upload_firebase_thread = threading.Thread(target=utils.upload_firebase_storage, args=[paths_audio, user['localId'], idtoken, code], daemon=True)
+    
+    upload_firebase_thread = threading.Thread(target=utils.upload_firebase_storage, args=[paths_audio, user['localId'], user['idtoken'], code, base_path], daemon=True)
     upload_firebase_thread.start()
 
     return redirect(reverse('panel'))
@@ -243,15 +246,12 @@ def panel(request, user):
     return render(request, 'panel.html', {'current_user':user['email'], 'page':'panel', 'books_details':books_details})
 
 @utils.get_user
-def player(request, book_code, user):
+def player(request, user, book_code):
 
     book = database.child(user['localId']).child(book_code).get(token=user['idtoken']).val()
 
     book['url'] = storage.child('users').child(user['localId']).child(book_code).child('icon.png').get_url(token=user['idtoken'])
-    book['audio_urls'] = list()
-    for audio_file in range(int(book['fileNum'])+1):
-        print(audio_file)
-        book['audio_urls'].append(storage.child('users').child(user['localId']).child(book_code).child(f'{audio_file}.mp3').get_url(token=user['idtoken']))
+    book['audio_url'] = storage.child('users').child(user['localId']).child(book_code).child(f'audio.mp3').get_url(token=user['idtoken'])
     book['currentFile'] = int(book['currentFile'])
     return render(request, 'player.html', { 'current_user':user['email'],'page':'player','book':book })
 
