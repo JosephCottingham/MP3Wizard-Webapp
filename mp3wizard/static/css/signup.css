@@ -9,6 +9,9 @@
 .button:hover {
   background-color: #414b53;
 }
+.button:focus {
+  background-color: #414b53;
+}
 
 .signin-btn {
   color: #2c3840;

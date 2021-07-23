@@ -203,7 +203,7 @@ def post_create(request, user):
 
     database.child(user['localId']).child(code).set(data, token=user['idtoken'])
 
-    
+    # utils.upload_firebase_storage(paths_audio, user['localId'], user['idtoken'], code, base_path)
     upload_firebase_thread = threading.Thread(target=utils.upload_firebase_storage, args=[paths_audio, user['localId'], user['idtoken'], code, base_path], daemon=True)
     upload_firebase_thread.start()
 
