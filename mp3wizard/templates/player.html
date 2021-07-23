@@ -11,13 +11,14 @@
 
 {% block main_content %}
 <div class="container">
+  <h1>{{ book.title }}</h1>
   <div class="header-container center">
-    <h1>{{ book.title }}</h1>
-    <img style="width: 500px;" src="{{ book.url }}"/>
+    <img class="book-icon" src="{{ book.url }}"/>
   </div>
   <audio id="player" controls>
   <source src="{{ book.audio_url }}" type="audio/mp3" />
   </audio>
+</div>
 
 {% endblock %}
 
