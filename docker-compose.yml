@@ -2,11 +2,7 @@ version: "3.9"
    
 services:
   django-app:
-    build: .
-    command: cd mp3wizard
-    command: python3 manage.py runserver 0.0.0.0:8000
-    volumes:
-      - ./mp3wizard:/code
+    build: ./mp3wizard
     ports:
       - "8000:8000"
 

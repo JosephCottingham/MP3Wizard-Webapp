@@ -1,0 +1,12 @@
+# syntax=docker/dockerfile:1
+FROM python:3.8-buster
+ENV PYTHONUNBUFFERED=1
+WORKDIR /code
+COPY . /code/
+RUN pip install -r requirements.txt
+COPY docker-entrypoint.sh /usr/local/bin/
+RUN chmod +x docker-entrypoint.sh
+RUN apt update -y
+RUN apt install ffmpeg -y
+EXPOSE 8000/tcp
+ENTRYPOINT ["docker-entrypoint.sh"]
