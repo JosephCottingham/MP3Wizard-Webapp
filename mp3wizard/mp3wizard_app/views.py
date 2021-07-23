@@ -149,8 +149,8 @@ def create(request, user):
     if not subscription or subscription['status'] != 'active':
         success_url = reverse('create')
         stripe_session = stripe.checkout.Session.create(
-            success_url='https://google.com',
-            cancel_url="https://example.com/cancel",
+            success_url=settings.WEBSITE_URL+reverse('create'),
+            cancel_url=settings.WEBSITE_URL+reverse('panel'),
             payment_method_types=["card"],
             line_items=[
                 {
@@ -291,7 +291,7 @@ def customerStripePortal(request, user):
 
     session = stripe.billing_portal.Session.create(
         customer=user_info['stripe_id'],
-        return_url='https://google.com',
+        return_url=settings.WEBSITE_URL+reverse('panel'),
     )
     
     return redirect(session.url, code=303)
